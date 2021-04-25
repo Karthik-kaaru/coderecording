@@ -1,0 +1,60 @@
+file_in = open("sample_input.txt",'r')
+
+no_employees = 0
+c = []
+d = []
+
+line = file_in.readline()
+while(line!=''):
+    if "employees: " in line:
+        no_employees = int(line[21])
+
+    elif ":" in line and (line.strip() != "Goodies and Prices:"):
+        a = line
+        b = a.split(':')
+        b[1] = b[1].strip()
+        b[1] = int(b[1])
+        c.append(b[0])
+        d.append(b[1])
+
+    line = file_in.readline()
+
+file_in.close()
+
+list_name = []
+list_price = []
+
+while (len(d) > 0):
+    min_price = d[0]
+    min_index = 0
+    for i in range(1,len(d)):
+        if d[i] < min_price:
+            min_price = d[i]
+            min_index = i
+            
+    list_name.append(c[min_index])
+    list_price.append(d[min_index])
+    c.pop(min_index)
+    d.pop(min_index)
+
+min_diff = list_price[no_employees-1] - list_price[0]
+min_index = 0
+max_index = 1
+
+for i in range(len(list_price)-no_employees+1):
+    diff = list_price[i+no_employees-1] - list_price[i]
+    if diff < min_diff:
+        min_index = i
+        max_index = i+no_employees-1
+        min_diff = diff
+
+file_out = open("sample_output.txt",'w')
+file_out.write("The goodies selected for distribution are:\n\n")
+
+for i in range(min_index, max_index+1):
+    str_out = list_name[i] + ': ' + str(list_price[i]) + '\n'
+    file_out.write(str_out)
+
+last_line = "\nAnd the difference between the chosen goodie with highest price and the lowest price is "+str(min_diff)
+file_out.write(last_line)
+file_out.close()
